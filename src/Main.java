@@ -1,23 +1,22 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
+/// какая-то фигня
 public class Main {
     public static void main(String[] args) {
         Library library = new Library();
         Scanner scanner = new Scanner(System.in);
+        AppContext appContext = new AppContext();
+        appContext.connect();
+        //appContext.alternateConnect();
+
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("\nОнлайн Библиотека\n");
-            System.out.println("Меню: ");
-            System.out.println("1. Добавить книгу");
-            System.out.println("2. Удалить книгу");
-            System.out.println("3. Найти книгу по ISBN");
-            System.out.println("4. Найти книгу по автору");
-            System.out.println("5. Изменить книгу");
-            System.out.println("6. Показать все книги");
-            System.out.println("7. Выход");
+            for (String s : Arrays.asList( "\nОнлайн Библиотека\n", "Меню: ", "1. Добавить книгу", "2. Удалить книгу", "3. Найти книгу по ISBN", "4. Найти книгу по автору", "5. Изменить книгу", "6. Показать все книги", "7. Выход", "Выберите пункт меню: ")) {
+                System.out.println(s);
+            }
 
-            System.out.println("Выберите пункт меню: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
@@ -93,6 +92,7 @@ public class Main {
                     System.out.println("Некорректная команда. Повторите ввод");
             }
         }
+        appContext.disconnect();
         scanner.close();
     }
 }
