@@ -1,5 +1,5 @@
 import java.util.Scanner;
-
+/// какая-то фигня
 public class Main {
     public static void main(String[] args) {
         Library library = new Library();
