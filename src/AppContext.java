@@ -1,91 +1,40 @@
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Properties;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 public class AppContext{
 
-   /* public String getUser() {
-        return user;
-    }*/
+    public String getUser() { return user; }
+    public void setUser(String user) { this.user = user; }
+    public String getPass() { return pass; }
+    public void setPass(String pass) { this.pass = pass; }
 
-    public void setUser(String user) {
-        this.user = user;
+    private String user = "";
+    private String pass = "";
+    private String url = "";
+    public String getUrl() {
+        return url;
+    }
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    /*public String getPass() {
-        return pass;
-    }*/
-
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
-
-    /*public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getDBName() {
-        return DBName;
-    }
-
-    public void setDBName(String DBName) {this.DBName = DBName;}
-    public String getSecyrity() {return secyrity;}
-    public void setSecyrity(String secyrity) {this.secyrity = secyrity;}
-*/
-    private String user = "ssa";
-    private String pass = "ssa";
-    private String host = "localhost";
-    private String SqlServer = "MSSQLSERVER";
-    private int port = 1433;
-    private String DBName = "LibraryTestDB";
-    private String secyrity = "";
-
-    public String getStrokaPodkl() {
-        return strokaPodkl;
-    }
-
-    public void setStrokaPodkl(String strokaPodkl) {
-        this.strokaPodkl = strokaPodkl;
-    }
-/*
-
-    public String getSqlServer() {
-        return SqlServer;
-    }
-
-    public void setSqlServer(String sqlServer) {
-        SqlServer = sqlServer;
-    }
-*/
-
-    private String strokaPodkl;
- /*   public AppContext(String host,String SqlServer, int port,String DBName,String secyrity, String user, String pass){
-        setStrokaPodkl( "jdbc:sqlserver://"+host+"\\"+SqlServer+":"+port+";database="+DBName+";"+secyrity+";" );
-        //jdbc:sqlserver://LAPTOP-U7N6H5S8\MSSQLSERVER:1433;database=LibraryTestDB;IntegratedSecurity=True;Connect Timeout=30;TrustServerCertificate=True;//
+    public AppContext(String url,String user,String pass){
+        setUrl( url );
         setUser(user);
         setPass(pass);
     }
-    public AppContext(String strokaPodkl,String user,String pass){
-        setStrokaPodkl( strokaPodkl );
-        setUser(user);
-        setPass(pass);
-    }*/
-    public AppContext(){}
+    public AppContext(){
+        initConnectionProperties();
+    }
 
  /*   public void alternateConnect(){
         SQLServerDataSource ds = new SQLServerDataSource();
@@ -117,14 +66,12 @@ public class AppContext{
 
     public void connect(){
         try{
-            String url = "jdbc:sqlserver://LAPTOP-U7N6H5S8:1433;database=LibraryTestDB;IntegratedSecurity=False;TrustServerCertificate=True;ConnectTimeout=30;";//
-            String username = "ssa";
-            String password = "ssa";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").getDeclaredConstructor().newInstance();
             //DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
-            try (Connection conn = DriverManager.getConnection(url, username, password)){
-
+            try (Connection connection = DriverManager.getConnection(getUrl(), getUser(), getPass())){
+            //try (Connection connection = getConnection()){
                 System.out.println("Connection to Store DB succesfull!");
+
             }
         }
         catch(Exception ex){
@@ -133,29 +80,45 @@ public class AppContext{
             System.out.println(ex);
         }
     }
-    public void disconnect(){
-        try (Connection conn = DriverManager.getConnection(getStrokaPodkl(), "ssa", "ssa")){
-            conn.close();
-            // работа с базой данных
-        } catch (SQLException e) {
-            //throw new RuntimeException(e);
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    public static Connection getConnection() throws SQLException, IOException {
+
+        Properties props = new Properties();
+        try(InputStream in = Files.newInputStream(Paths.get("database.properties"))){
+            props.load(in);
+        } catch (IOException e){
             System.out.println(e);
+        } catch (Exception ex){
+            System.out.println(ex);
         }
+        String url = props.getProperty("url");
+        String username = props.getProperty("username");
+        String password = props.getProperty("password");
+
+        return DriverManager.getConnection(url, username, password);
     }
 
-    /*init {
-        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        val connectionUrl = strokaPodkl;
-                //"jdbc:sqlserver://localhost:1433;encrypt=true;database=DBName;trustServerCertificate=true;"
-        connection = DriverManager.getConnection(connectionUrl, getUser(), getPass());
-    }*/
+
+    public void initConnectionProperties() {
+        Properties props = new Properties();
+        try(InputStream in = Files.newInputStream(Paths.get("database.properties"))){
+            props.load(in);
+        } catch (IOException e){
+            System.out.println(e);
+        } catch (Exception ex){
+            System.out.println(ex);
+        }
+        setUrl(props.getProperty("url"));
+        setUser(props.getProperty("username"));
+        setPass(props.getProperty("password"));
+    }
+
+
+
+
+    //------------------------------------------------------------------------------------------------------------------
 }
 
-/*
-pom.xml
-<dependency>
-    <groupId>com.microsoft.sqlserver</groupId>
-    <artifactId>mssql-jdbc</artifactId>
-    <version>11.2.2.jre11</version>
-</dependency>
- */
+
