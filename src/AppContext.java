@@ -7,8 +7,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
-import com.microsoft.sqlserver.jdbc.SQLServerDriver;
+//import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+//import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 public class AppContext{
 
@@ -36,7 +36,55 @@ public class AppContext{
         initConnectionProperties();
     }
 
- /*   public void alternateConnect(){
+    public void connect(){
+        try{
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").getDeclaredConstructor().newInstance();
+            //DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
+            try (Connection connection = DriverManager.getConnection(getUrl(), getUser(), getPass())){
+            //try (Connection connection = getConnection()){
+                System.out.println("Connection to Store DB succesfull!");
+            }
+        }
+        catch(Exception ex){
+            System.out.println("Connection failed...");
+            System.out.println(ex);
+        }
+    }
+    //------------------------------------------------------------------------------------------------------------------
+    public static Connection getConnection() throws SQLException, IOException {
+
+        Properties props = new Properties();
+        try(InputStream in = Files.newInputStream(Paths.get("database.properties"))){
+            props.load(in);
+        } catch (IOException e){
+            System.out.println(e);
+        } catch (Exception ex){
+            System.out.println(ex);
+        }
+        String url = props.getProperty("url");
+        String username = props.getProperty("username");
+        String password = props.getProperty("password");
+
+        return DriverManager.getConnection(url, username, password);
+    }
+
+    public void initConnectionProperties() {
+        Properties props = new Properties();
+        try(InputStream in = Files.newInputStream(Paths.get("database.properties"))){
+            props.load(in);
+        } catch (IOException e){
+            System.out.println(e);
+        } catch (Exception ex){
+            System.out.println(ex);
+        }
+        setUrl(props.getProperty("url"));
+        setUser(props.getProperty("username"));
+        setPass(props.getProperty("password"));
+    }
+    //------------------------------------------------------------------------------------------------------------------
+}
+
+/*   public void alternateConnect(){
         SQLServerDataSource ds = new SQLServerDataSource();
         ds.setUser("ssa");
         ds.setPassword("ssa");
@@ -63,62 +111,4 @@ public class AppContext{
             e.printStackTrace();
         }
     }*/
-
-    public void connect(){
-        try{
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").getDeclaredConstructor().newInstance();
-            //DriverManager.registerDriver(new com.microsoft.sqlserver.jdbc.SQLServerDriver());
-            try (Connection connection = DriverManager.getConnection(getUrl(), getUser(), getPass())){
-            //try (Connection connection = getConnection()){
-                System.out.println("Connection to Store DB succesfull!");
-
-            }
-        }
-        catch(Exception ex){
-            System.out.println("Connection failed...");
-
-            System.out.println(ex);
-        }
-    }
-
-    //------------------------------------------------------------------------------------------------------------------
-
-    public static Connection getConnection() throws SQLException, IOException {
-
-        Properties props = new Properties();
-        try(InputStream in = Files.newInputStream(Paths.get("database.properties"))){
-            props.load(in);
-        } catch (IOException e){
-            System.out.println(e);
-        } catch (Exception ex){
-            System.out.println(ex);
-        }
-        String url = props.getProperty("url");
-        String username = props.getProperty("username");
-        String password = props.getProperty("password");
-
-        return DriverManager.getConnection(url, username, password);
-    }
-
-
-    public void initConnectionProperties() {
-        Properties props = new Properties();
-        try(InputStream in = Files.newInputStream(Paths.get("database.properties"))){
-            props.load(in);
-        } catch (IOException e){
-            System.out.println(e);
-        } catch (Exception ex){
-            System.out.println(ex);
-        }
-        setUrl(props.getProperty("url"));
-        setUser(props.getProperty("username"));
-        setPass(props.getProperty("password"));
-    }
-
-
-
-
-    //------------------------------------------------------------------------------------------------------------------
-}
-
 

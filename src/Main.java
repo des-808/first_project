@@ -92,7 +92,6 @@ public class Main {
                     System.out.println("Некорректная команда. Повторите ввод");
             }
         }
-        appContext.disconnect();
         scanner.close();
     }
 }
