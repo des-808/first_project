@@ -66,9 +66,6 @@ public class DatabaseManager {
     public void setUrl(String url) {
         this.url = url;
     }
-
-
-
     public boolean updateBook(Book book) {
         try (Connection connection = DriverManager.getConnection(getUrl(), getUser(), getPass())) {
             String query = "UPDATE Book SET title = ?, author = ? WHERE isbn = ?";
@@ -82,7 +79,6 @@ public class DatabaseManager {
             return false;
         }
     }
-
     public boolean addBook(Book book) {
        Book isbn2 = findBookByIsbn(book.getIsbn());
        if (isbn2 != null) {return false;}
@@ -99,7 +95,6 @@ public class DatabaseManager {
             return false;
         }
     }
-
     public boolean removeBook(Book book) {
         try (Connection connection = DriverManager.getConnection(getUrl(), getUser(), getPass())) {
             String query = "DELETE FROM Book WHERE isbn = ?";
@@ -111,7 +106,6 @@ public class DatabaseManager {
             return false;
         }
     }
-
     public Book findBookByIsbn(String isbn) {
         try (Connection connection = DriverManager.getConnection(getUrl(), getUser(), getPass())) {
             String query = "SELECT * FROM Book WHERE isbn = ?";
@@ -126,7 +120,6 @@ public class DatabaseManager {
         }
         return null;
     }
-
     public HashSet<Book> findBookByAuthor(String author) {
         try (Connection connection = DriverManager.getConnection(getUrl(), getUser(), getPass())) {
             String query = "SELECT * FROM Book WHERE author = ?";
@@ -143,7 +136,6 @@ public class DatabaseManager {
             return null;
         }
     }
-
     public HashSet<Book> listBooks() {
         HashSet<Book> books = new HashSet<>();
         try (Connection connection = DriverManager.getConnection(getUrl(), getUser(), getPass())) {
@@ -159,7 +151,6 @@ public class DatabaseManager {
             return null;
         }
     }
-
     public void initConnectionProperties() {
         Properties props = new Properties();
         try(InputStream in = Files.newInputStream(Paths.get("database.properties"))){
