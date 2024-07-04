@@ -26,13 +26,24 @@ public class DatabaseManager {
             createDatabase();
         }
     }
+    public void dropDatabase(String dbName) { try (Connection connection  = DriverManager.getConnection(getUrl(), getUser(), getPass()))  {
+            String query0  = "DROP DATABASE "+dbName+";";
+            Statement statement  = connection.createStatement();
+            statement.executeUpdate(query0);
+            System.out.println("База данных успешно удалена");
+         } catch  (SQLException e)  {  System.out.println("Ошибка при удалении базы данных: " + e);
+    }
+    }
+
     public void createDatabase() {
         try (Connection connection = DriverManager.getConnection(getTestUrl(), getUser(), getPass())) {
-            String query = "CREATE DATABASE LibraryTestDB;";
+            String query0 = "Drop DATABASE LibraryTestDB;";
+            String query1 = "CREATE DATABASE LibraryTestDB;";
             String query2 = "USE LibraryTestDB;";
             String query3 = "CREATE TABLE Book (id INT PRIMARY KEY IDENTITY(1,1),title VARCHAR(255),author VARCHAR(255),isbn VARCHAR(13));";
             Statement statement = connection.createStatement();
-            statement.executeUpdate(query);
+            statement.executeUpdate(query0);
+            statement.executeUpdate(query1);
             statement.executeUpdate(query2);
             statement.executeUpdate(query3);
             System.out.println("База данных успешно создана");
@@ -73,6 +84,9 @@ public class DatabaseManager {
     }
 
     public boolean addBook(Book book) {
+       Book isbn2 = findBookByIsbn(book.getIsbn());
+       if (isbn2 != null) {return false;}
+        //if (isbn2.getIsbn().equals(book.getIsbn())) { return false;}
         try (Connection connection = DriverManager.getConnection(getUrl(), getUser(), getPass())) {
             String query = "INSERT INTO Book ( isbn,title, author ) VALUES (?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);

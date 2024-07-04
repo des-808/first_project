@@ -1,18 +1,14 @@
 import java.util.Arrays;
 import java.util.Scanner;
-
-
-
 /// какая-то фигня
 public class Main {
     public static void main(String[] args) {
-        //Library library = new Library();
         Scanner scanner = new Scanner(System.in);
         DatabaseManager databaseManager = new DatabaseManager();
         boolean exit = false;
 
         while (!exit) {
-            for (String s : Arrays.asList( "\nОнлайн Библиотека\n", "Меню: ", "1. Добавить книгу", "2. Удалить книгу", "3. Найти книгу по ISBN", "4. Найти книгу по автору", "5. Изменить книгу", "6. Показать все книги", "7. Выход", "Выберите пункт меню: ")) {
+            for (String s : Arrays.asList( "\nОнлайн Библиотека\n", "Меню: ", "1. Добавить книгу", "2. Удалить книгу", "3. Найти книгу по ISBN", "4. Найти книгу по автору", "5. Изменить книгу", "6. Показать все книги", "7. Выход","8. Удаление базы данных", "Выберите пункт меню: ")) {
                 System.out.println(s);
             }
 
@@ -91,6 +87,11 @@ public class Main {
                     break;
                 case 7:
                     exit = true;
+                    break;
+                case 8:
+                    System.out.print("Введите название базы данных для удаления: ");
+                    String dbName = scanner.nextLine();
+                    databaseManager.dropDatabase(dbName);
                     break;
                 default:
                     System.out.println("Некорректная команда. Повторите ввод");
