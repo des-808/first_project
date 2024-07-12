@@ -1,12 +1,13 @@
+/*
 import java.util.Objects;
 
-public class Book {
+public class Book_old {
     private int id; //primary key
     private String title;
     private String author;
     private String isbn;
 
-    public Book(String isbn,String title, String author ) {
+    public Book_old(String isbn, String title, String author ) {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
@@ -47,7 +48,7 @@ public class Book {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Book book = (Book) o;
+        Book_old book = (Book_old) o;
         return Objects.equals(isbn, book.isbn);
     }
 
@@ -58,6 +59,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return "ISBN: " + isbn + "   Title: " + title + "   Author: " + author;
+        return "ISBN: " + isbn + "   Title: " + title + "   BookLib.Author: " + author;
     }
 }
+*/
