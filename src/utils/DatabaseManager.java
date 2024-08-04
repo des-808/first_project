@@ -32,6 +32,12 @@ public class DatabaseManager {
     private static String testUrl;// = "jdbc:sqlserver://localhost:1433;database=master;IntegratedSecurity=False;TrustServerCertificate=True;ConnectTimeout=30;";
     private static String user = "ssa";
     private static String pass = "ssa";
+    private static String dbName = "";
+
+    public static String getDbName() { return dbName; }
+    public static void setDbName(String tmp) {dbName = tmp;}
+
+
 
     public static void DatabaseManagerInit() {
         initConnectionProperties(); // load connection properties from file
@@ -45,6 +51,7 @@ public class DatabaseManager {
         } catch (Exception ex){
             System.out.println(ex);
         }
+        setDbName(props.getProperty("dbName"));
         setUrlTest(props.getProperty("url_Test"));
         setUrl(props.getProperty("url"));
         setUser(props.getProperty("username"));
@@ -105,9 +112,9 @@ public class DatabaseManager {
     }
 
 
-    static String newBdName = "CREATE DATABASE LibraryDB2 ";
-static String newBd = /*"CREATE DATABASE LibraryDB2 " +*/
-        " USE LibraryDB2 " +
+    static String newBdName = "CREATE DATABASE "+getDbName()+" ";
+static String newBd = /*"CREATE DATABASE "+dbName+" " +*/
+        " "+getDbName()+" " +
         "CREATE TABLE Author (" +
         "    Author_id INT PRIMARY KEY IDENTITY(1,1)," +
         "    FirstName VARCHAR(255)," +
