@@ -3,7 +3,7 @@ package models;
 public class Publisher {
     private int id;
     private String name;
-
+    //наделал фигни
     public Publisher(String name) {
         this.name = name;
     }

@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Properties;
-
+//наделал фигни
 public class DatabaseManager {
     //-------------------------------------------------------------------------
     //Функция для подключения к базе данных с возвращаемым подключением
