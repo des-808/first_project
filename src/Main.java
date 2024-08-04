@@ -14,7 +14,22 @@ public class Main {
         Library databaseLibrary = new Library();
         boolean exit = false;
         while (!exit) {
-            for (String s : Arrays.asList( "\nОнлайн Библиотека\n", "Меню: ", "1. Добавить книгу", "2. Удалить книгу", "3. Найти книгу по ISBN", "4. Найти книгу по автору", "5. Найти книгу по Издателю", "6. Найти книгу по Жанру", "7. Изменить книгу", "8. Показать все книги","9. Удаление базы данных", "10. Выход", "Выберите пункт меню: ")) {
+            for (String s : Arrays.asList( "\nОнлайн Библиотека\n",
+                    "Меню: ",
+                    "1. Добавить книгу",
+                    "2. Удалить книгу",
+                    "3. Найти книгу по ISBN",
+                    "4. Найти книгу по автору",
+                    "5. Найти книгу по Издателю",
+                    "6. Найти книгу по Жанру",
+                    "7. Изменить книгу",
+                    "8. Показать все книги",
+                    "9. Добавить автора",
+                    "10. Добавить Издательство",
+                    "11. Добавить Жанр",
+                    "12. Удаление базы данных",
+                    "13. Выход",
+                    "Выберите пункт меню: ")) {
                 System.out.println(s);
             }
             int choice = scanner.nextInt();
@@ -155,11 +170,43 @@ public class Main {
                     }
                     break;
                 case 9:
+                    System.out.print("Добавить Имя Автора: ");
+                    String authorToNewFirstName= scanner.nextLine();
+                    System.out.print("Добавить Фамилию Автора: ");
+                    String authorToNewLastName= scanner.nextLine();
+                    Author newToNewAuthor = new Author(authorToNewFirstName, authorToNewLastName);
+                    if(databaseLibrary.addNewAuthor(newToNewAuthor)>0) {
+                        System.out.println("Автор успешно добавлен");
+                    }else {
+                        System.out.println("Автор уже существует");
+                    }
+                    break;
+                case 10:
+                    System.out.print("Добавить издателя: ");
+                    String publisherToNewName= scanner.nextLine();
+                    Publisher newToNewPublisher = new Publisher(publisherToNewName);
+                    if(databaseLibrary.addNewPublisher(newToNewPublisher)>0) {
+                        System.out.println("Издатель успешно добавлен");
+                    }else {
+                        System.out.println("Издатель уже существует");
+                    }
+                    break;
+                case 11:
+                    System.out.print("Добавить жанр: ");
+                    String genreToNewName= scanner.nextLine();
+                    Genre newToNewGenre = new Genre(genreToNewName);
+                    if(databaseLibrary.addNewGenre(newToNewGenre)>0) {
+                        System.out.println("Жанр успешно добавлен");
+                    }else {
+                        System.out.println("Жанр уже существует");
+                    }
+                    break;
+                case 12:
                     System.out.print("Введите название базы данных для удаления: ");
                     //String dbName = scanner.nextLine();
                     //utils.DatabaseManager.dropDatabase(scanner.nextLine());
                     break;
-                case 10:
+                case 13:
                     exit = true;
                     break;
                 default:

@@ -111,6 +111,19 @@ public class Library {
         }
     }
 
+    public int addNewGenre(Genre newToNewGenre) {
+        int addedGenreId = 0;
+        // Find or add genre
+        Genre genre = findGenre(newToNewGenre.getName());
+        if (genre == null) {
+            genre = new Genre(newToNewGenre.getName());
+            addedGenreId = addGenre(genre);
+        } else {
+            //addedGenreId = genre.getId();
+        }
+        return addedGenreId;
+    }
+
     private int addGenre(Genre genre) {
         try (Connection connection = DatabaseManager.connect()) {
             PreparedStatement statement = connection.prepareStatement(
@@ -130,6 +143,18 @@ public class Library {
         return 0;
     }
 
+    public int addNewPublisher(Publisher newToNewPublisher) {
+        int addedPublisherId = 0;
+        // Find or add publisher
+        Publisher publisher = findPublisher(newToNewPublisher.getName());
+        if (publisher == null) {
+            publisher = new Publisher(newToNewPublisher.getName());
+            addedPublisherId = addPublisher(publisher);
+        } else {
+            //addedPublisherId = publisher.getId();
+        }
+        return addedPublisherId;
+    }
     private int addPublisher(Publisher publisher) {
         try (Connection connection = DatabaseManager.connect()) {
             PreparedStatement statement = connection.prepareStatement(
@@ -148,6 +173,22 @@ public class Library {
         }
         return 0;
     }
+
+    public int addNewAuthor(Author authorNew) {
+        int addedAuthorId = 0;
+        // Find or add author
+        Author author = findAuthor(authorNew);
+        if (author == null) {
+            author = new Author(authorNew.getFirstName(), authorNew.getLastName());
+            addedAuthorId = addAuthor(author);
+        } else {
+            //addedAuthorId = author.getId();
+        }
+        return addedAuthorId;
+    }
+
+
+
 
     private int addAuthor(Author author) {
         try (Connection connection = DatabaseManager.connect()) {
@@ -173,13 +214,18 @@ public class Library {
     public List<Book> findBookByGenre(Genre genr) {
         List<Book> books = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Book WHERE Book.Genre_id =(SELECT Genre_id FROM Genre WHERE GenreName = ?)");
+            String query = "SELECT Book.id, Book.title,Book.price, Book.pages, Book.isbn, Author.Author_id, Author.FirstName, Author.LastName, Publisher.Publisher_id, Publisher.PublisherName, Genre.Genre_id ,Genre.GenreName FROM Book " +
+                    "JOIN Author ON Book.author_id = Author.Author_id " +
+                    "JOIN Publisher ON Book.publisher_id = Publisher.Publisher_id " +
+                    "JOIN Genre ON Book.genre_id = Genre.Genre_id " +
+                    "WHERE Genre.GenreName = ?";
+            PreparedStatement statement = connection.prepareStatement(query);//"SELECT * FROM Book WHERE Book.Genre_id =(SELECT Genre_id FROM Genre WHERE GenreName = ?)"
             statement.setString(1, genr.getName());
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
-                Author author = new Author(resultSet.getInt("Author_id"));
-                Publisher publisher = new Publisher(resultSet.getInt("Publisher_id"));
-                Genre genre = new Genre(resultSet.getInt("Genre_id"));
+                Author author = new Author(resultSet.getInt("Author_id"), resultSet.getString("FirstName"), resultSet.getString("LastName"));
+                Publisher publisher = new Publisher(resultSet.getInt("Publisher_id"), resultSet.getString("PublisherName"));
+                Genre genre = new Genre(resultSet.getInt("Genre_id"), resultSet.getString("GenreName"));
                 Book book = new Book(
                         resultSet.getInt("id"),
                         resultSet.getString("title"),
@@ -229,13 +275,18 @@ public class Library {
     public List<Book> findBookByPublisher(Publisher publish) {
         List<Book> books = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Book WHERE Book.Publisher_id =(SELECT Publisher_id FROM Publisher WHERE PublisherName = ?)");
+            String query = "SELECT Book.id, Book.title,Book.price, Book.pages, Book.isbn, Author.Author_id, Author.FirstName, Author.LastName, Publisher.Publisher_id, Publisher.PublisherName, Genre.Genre_id ,Genre.GenreName FROM Book " +
+                    "JOIN Author ON Book.author_id = Author.Author_id " +
+                    "JOIN Publisher ON Book.publisher_id = Publisher.Publisher_id " +
+                    "JOIN Genre ON Book.genre_id = Genre.Genre_id " +
+                    "WHERE Publisher.PublisherName =?";
+            PreparedStatement statement = connection.prepareStatement(query);//"SELECT * FROM Book WHERE Book.Publisher_id =(SELECT Publisher_id FROM Publisher WHERE PublisherName = ?)"
             statement.setString(1, publish.getName());
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
-                Author author = new Author(resultSet.getInt("Author_id"));
-                Publisher publisher = new Publisher(resultSet.getInt("Publisher_id"));
-                Genre genre = new Genre(resultSet.getInt("Genre_id"));
+                Author author = new Author(resultSet.getInt("Author_id"), resultSet.getString("FirstName"), resultSet.getString("LastName"));
+                Publisher publisher = new Publisher(resultSet.getInt("Publisher_id"), resultSet.getString("PublisherName"));
+                Genre genre = new Genre(resultSet.getInt("Genre_id"), resultSet.getString("GenreName"));
                 Book book = new Book(
                         resultSet.getInt("id"),
                         resultSet.getString("title"),
@@ -300,17 +351,19 @@ public class Library {
 
     // добавляем новую книгу в базу данных со связанными таблицами
     public Book findBookByIsbn(String isbn) {
-        Author author = new Author(); //получаем автора
-        Publisher publisher = new Publisher(); //получаем Издателя
-        Genre genre = new Genre(); //получаем Жанр
         try (Connection connection = DatabaseManager.connect()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Book WHERE isbn = ?");
+           String query ="SELECT Book.id, Book.title,Book.price, Book.pages, Book.isbn, Author.Author_id, Author.FirstName, Author.LastName, Publisher.Publisher_id, Publisher.PublisherName, Genre.Genre_id ,Genre.GenreName FROM Book " +
+                    "JOIN Author ON Book.author_id = Author.Author_id " +
+                    "JOIN Publisher ON Book.publisher_id = Publisher.Publisher_id " +
+                    "JOIN Genre ON Book.genre_id = Genre.Genre_id " +
+                    "WHERE Book.isbn =?";
+            PreparedStatement statement = connection.prepareStatement(query);//"SELECT * FROM Book WHERE isbn = ?"
             statement.setString(1, isbn);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                author.setId(resultSet.getInt("author_id"));
-                publisher.setId(resultSet.getInt("publisher_id"));
-                genre.setId(resultSet.getInt("genre_id"));
+                Author author = new Author(resultSet.getInt("Author_id"), resultSet.getString("FirstName"), resultSet.getString("LastName"));
+                Publisher publisher = new Publisher(resultSet.getInt("Publisher_id"), resultSet.getString("PublisherName"));
+                Genre genre = new Genre(resultSet.getInt("Genre_id"), resultSet.getString("GenreName"));
                 return new Book(
                         resultSet.getInt("id"),
                         resultSet.getString("title"),
@@ -331,14 +384,19 @@ public class Library {
     public List<Book> findBookByAuthor(Author auth) {
         List<Book> books = new ArrayList<>();
         try (Connection connection = DatabaseManager.connect()) {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Book WHERE Book.author_id =(SELECT Author_id FROM Author WHERE FirstName = ? AND LastName = ?)");
+            String query ="SELECT Book.id, Book.title,Book.price, Book.pages, Book.isbn, Author.Author_id, Author.FirstName, Author.LastName, Publisher.Publisher_id, Publisher.PublisherName, Genre.Genre_id ,Genre.GenreName FROM Book " +
+                    "JOIN Author ON Book.author_id = Author.Author_id " +
+                    "JOIN Publisher ON Book.publisher_id = Publisher.Publisher_id " +
+                    "JOIN Genre ON Book.genre_id = Genre.Genre_id " +
+                    "WHERE FirstName = ? AND LastName = ?";
+            PreparedStatement statement = connection.prepareStatement(query);//"SELECT * FROM Book WHERE Book.author_id =(SELECT Author_id FROM Author WHERE FirstName = ? AND LastName = ?)"
             statement.setString(1, auth.getFirstName());
             statement.setString(2, auth.getLastName());
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
-                Author author = new Author(resultSet.getInt("Author_id"));
-                Publisher publisher = new Publisher(resultSet.getInt("Publisher_id"));
-                Genre genre = new Genre(resultSet.getInt("Genre_id"));
+                Author author = new Author(resultSet.getInt("Author_id"), resultSet.getString("FirstName"), resultSet.getString("LastName"));
+                Publisher publisher = new Publisher(resultSet.getInt("Publisher_id"), resultSet.getString("PublisherName"));
+                Genre genre = new Genre(resultSet.getInt("Genre_id"), resultSet.getString("GenreName"));
                 Book book = new Book(
                         resultSet.getInt("id"),
                         resultSet.getString("title"),
@@ -432,6 +490,8 @@ String query = "SELECT Book.id, Book.title,Book.price, Book.pages, Book.isbn, Au
         }
         return null;
     }
+
+
 }
 
 
