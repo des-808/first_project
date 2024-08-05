@@ -30,14 +30,29 @@ public class DatabaseManager {
 
     private static String url ;
     private static String testUrl;// = "jdbc:sqlserver://localhost:1433;database=master;IntegratedSecurity=False;TrustServerCertificate=True;ConnectTimeout=30;";
-    private static String user = "ssa";
-    private static String pass = "ssa";
+    private static String user;
+    private static String pass;
+    private static String url_head;
     private static String dbName = "";
+    private static String url_tail;
 
     public static String getDbName() { return dbName; }
     public static void setDbName(String tmp) {dbName = tmp;}
+    public static String getUrl_tail() {
+        return url_tail;
+    }
 
+    public static void setUrl_tail(String urlTail) {
+        url_tail = urlTail;
+    }
 
+    public static String getUrl_head() {
+        return url_head;
+    }
+
+    public static void setUrl_head(String urlHead) {
+        url_head = urlHead;
+    }
 
     public static void DatabaseManagerInit() {
         initConnectionProperties(); // load connection properties from file
@@ -51,9 +66,12 @@ public class DatabaseManager {
         } catch (Exception ex){
             System.out.println(ex);
         }
-        setDbName(props.getProperty("dbName"));
+        setUrl_head(props.getProperty("url_head"));
+        setDbName(props.getProperty("url_dbName"));
+        setUrl_tail(props.getProperty("url_tail"));
+        setUrl(getUrl_head()+" "+getDbName()+" "+getUrl_tail());
         setUrlTest(props.getProperty("url_Test"));
-        setUrl(props.getProperty("url"));
+        //setUrl(props.getProperty("url"));
         setUser(props.getProperty("username"));
         setPass(props.getProperty("password"));
     }
